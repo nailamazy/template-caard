@@ -77,16 +77,16 @@ export function KTMCardBack({ student, university, theme }: KTMCardBackProps) {
           </div>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "140px" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "150px" }}>
           <div style={{ fontSize: "8px", color: "#666", marginBottom: "2px" }}>Dosen Wali,</div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "34px", width: "100%" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "42px", width: "100%" }}>
             <img
               src={sigImg}
               alt="Tanda Tangan"
               style={{
-                height: "32px",
+                height: "40px",
                 width: "auto",
-                maxWidth: "110px",
+                maxWidth: "130px",
                 objectFit: "contain",
               }}
             />
