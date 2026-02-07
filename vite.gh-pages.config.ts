@@ -17,7 +17,7 @@ export default defineConfig({
     },
   },
   root: path.resolve(__dirname, "client"),
-  base: "./",
+  base: "/Web-Deploy-Helper/",
   build: {
     outDir: path.resolve(__dirname, "docs"),
     emptyOutDir: true,
