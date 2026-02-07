@@ -29,8 +29,16 @@ export function useCard(id: number) {
 
 export function useCreateCard() {
   const queryClient = useQueryClient();
+
+  // Check if API is enabled (will be false on GitHub Pages)
+  const apiEnabled = import.meta.env.VITE_API_ENABLED !== "false";
+
   return useMutation({
     mutationFn: async (data: InsertSavedCard) => {
+      if (!apiEnabled) {
+        throw new Error("Backend API is not available in static hosting mode");
+      }
+
       const res = await fetch(api.cards.create.path, {
         method: api.cards.create.method,
         headers: { "Content-Type": "application/json" },

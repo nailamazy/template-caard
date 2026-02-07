@@ -1,10 +1,10 @@
 import { useState, useRef } from "react";
-import { 
-  defaultStudent, 
-  defaultUniversity, 
-  cardThemes, 
-  generateRandomStudent, 
-  type StudentData, 
+import {
+  defaultStudent,
+  defaultUniversity,
+  cardThemes,
+  generateRandomStudent,
+  type StudentData,
   type UniversityData,
   fakultasList,
   jenjangList
@@ -24,14 +24,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { 
-  Download, 
-  Shuffle, 
-  Save, 
-  RotateCw, 
-  Upload, 
-  GraduationCap, 
-  User, 
+import {
+  Download,
+  Shuffle,
+  Save,
+  RotateCw,
+  Upload,
+  GraduationCap,
+  User,
   Palette,
   School
 } from "lucide-react";
@@ -41,7 +41,7 @@ export default function Home() {
   const [university, setUniversity] = useState<UniversityData>(defaultUniversity);
   const [theme, setTheme] = useState(cardThemes[0]);
   const [activeTab, setActiveTab] = useState("student");
-  
+
   const frontRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -58,19 +58,19 @@ export default function Home() {
 
   const handleDownload = async (elementRef: React.RefObject<HTMLDivElement>, fileName: string) => {
     if (!elementRef.current) return;
-    
+
     try {
       const canvas = await html2canvas(elementRef.current, {
         scale: 2, // Higher resolution
         useCORS: true,
         backgroundColor: null,
       });
-      
+
       const link = document.createElement("a");
       link.download = `${fileName}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
-      
+
       toast({
         title: "Download Started",
         description: `Downloading ${fileName}...`,
@@ -140,29 +140,31 @@ export default function Home() {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={handleRandomize}
               className="hidden sm:flex"
             >
               <Shuffle className="mr-2 h-4 w-4" />
               Randomize
             </Button>
-            <Button 
-              onClick={handleSave} 
-              disabled={createCardMutation.isPending}
-              className="shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/30 active:scale-95"
-            >
-              <Save className="mr-2 h-4 w-4" />
-              {createCardMutation.isPending ? "Saving..." : "Save Card"}
-            </Button>
+            {import.meta.env.VITE_API_ENABLED !== "false" && (
+              <Button
+                onClick={handleSave}
+                disabled={createCardMutation.isPending}
+                className="shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/30 active:scale-95"
+              >
+                <Save className="mr-2 h-4 w-4" />
+                {createCardMutation.isPending ? "Saving..." : "Save Card"}
+              </Button>
+            )}
           </div>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
+
           {/* Controls Section */}
           <div className="lg:col-span-5 xl:col-span-4 space-y-6">
             <Card className="border-0 shadow-lg shadow-black/5 bg-white/80 backdrop-blur-sm overflow-hidden">
@@ -175,22 +177,22 @@ export default function Home() {
               <CardContent className="p-0">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                   <TabsList className="w-full grid grid-cols-3 rounded-none bg-transparent border-b p-0 h-12">
-                    <TabsTrigger 
-                      value="student" 
+                    <TabsTrigger
+                      value="student"
                       className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none h-full"
                     >
                       <User className="w-4 h-4 mr-2" />
                       Student
                     </TabsTrigger>
-                    <TabsTrigger 
-                      value="university" 
+                    <TabsTrigger
+                      value="university"
                       className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none h-full"
                     >
                       <School className="w-4 h-4 mr-2" />
                       University
                     </TabsTrigger>
-                    <TabsTrigger 
-                      value="theme" 
+                    <TabsTrigger
+                      value="theme"
                       className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none h-full"
                     >
                       <Palette className="w-4 h-4 mr-2" />
@@ -212,10 +214,10 @@ export default function Home() {
                               )}
                             </div>
                             <div className="flex-1">
-                              <Input 
-                                type="file" 
-                                accept="image/*" 
-                                onChange={(e) => handlePhotoUpload(e, 'student')} 
+                              <Input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handlePhotoUpload(e, 'student')}
                                 className="cursor-pointer file:cursor-pointer"
                               />
                               <p className="text-xs text-muted-foreground mt-1">Recommended: Square ratio, max 2MB</p>
@@ -225,41 +227,41 @@ export default function Home() {
 
                         <div className="space-y-2 col-span-2">
                           <Label>Full Name</Label>
-                          <Input 
-                            value={student.nama} 
-                            onChange={(e) => handleStudentChange("nama", e.target.value)} 
+                          <Input
+                            value={student.nama}
+                            onChange={(e) => handleStudentChange("nama", e.target.value)}
                           />
                         </div>
 
                         <div className="space-y-2">
                           <Label>NIM</Label>
-                          <Input 
-                            value={student.nim} 
-                            onChange={(e) => handleStudentChange("nim", e.target.value)} 
+                          <Input
+                            value={student.nim}
+                            onChange={(e) => handleStudentChange("nim", e.target.value)}
                           />
                         </div>
 
                         <div className="space-y-2">
                           <Label>Place of Birth</Label>
-                          <Input 
-                            value={student.tempatLahir} 
-                            onChange={(e) => handleStudentChange("tempatLahir", e.target.value)} 
+                          <Input
+                            value={student.tempatLahir}
+                            onChange={(e) => handleStudentChange("tempatLahir", e.target.value)}
                           />
                         </div>
 
                         <div className="space-y-2">
                           <Label>Date of Birth</Label>
-                          <Input 
-                            value={student.tanggalLahir} 
-                            onChange={(e) => handleStudentChange("tanggalLahir", e.target.value)} 
+                          <Input
+                            value={student.tanggalLahir}
+                            onChange={(e) => handleStudentChange("tanggalLahir", e.target.value)}
                             placeholder="DD/MM/YYYY"
                           />
                         </div>
 
                         <div className="space-y-2">
                           <Label>Degree (Jenjang)</Label>
-                          <Select 
-                            value={student.jenjang} 
+                          <Select
+                            value={student.jenjang}
                             onValueChange={(val) => handleStudentChange("jenjang", val)}
                           >
                             <SelectTrigger>
@@ -275,8 +277,8 @@ export default function Home() {
 
                         <div className="space-y-2 col-span-2">
                           <Label>Faculty</Label>
-                          <Select 
-                            value={student.fakultas} 
+                          <Select
+                            value={student.fakultas}
                             onValueChange={(val) => handleStudentChange("fakultas", val)}
                           >
                             <SelectTrigger>
@@ -292,17 +294,17 @@ export default function Home() {
 
                         <div className="space-y-2 col-span-2">
                           <Label>Study Program</Label>
-                          <Input 
-                            value={student.programStudi} 
-                            onChange={(e) => handleStudentChange("programStudi", e.target.value)} 
+                          <Input
+                            value={student.programStudi}
+                            onChange={(e) => handleStudentChange("programStudi", e.target.value)}
                           />
                         </div>
 
                         <div className="space-y-2 col-span-2">
                           <Label>Academic Advisor</Label>
-                          <Input 
-                            value={student.dosenWali} 
-                            onChange={(e) => handleStudentChange("dosenWali", e.target.value)} 
+                          <Input
+                            value={student.dosenWali}
+                            onChange={(e) => handleStudentChange("dosenWali", e.target.value)}
                           />
                         </div>
                       </div>
@@ -320,10 +322,10 @@ export default function Home() {
                             )}
                           </div>
                           <div className="flex-1">
-                            <Input 
-                              type="file" 
-                              accept="image/*" 
-                              onChange={(e) => handlePhotoUpload(e, 'logo')} 
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handlePhotoUpload(e, 'logo')}
                               className="cursor-pointer file:cursor-pointer"
                             />
                           </div>
@@ -332,17 +334,17 @@ export default function Home() {
 
                       <div className="space-y-2">
                         <Label>University Name</Label>
-                        <Input 
-                          value={university.name} 
-                          onChange={(e) => handleUniversityChange("name", e.target.value)} 
+                        <Input
+                          value={university.name}
+                          onChange={(e) => handleUniversityChange("name", e.target.value)}
                         />
                       </div>
 
                       <div className="space-y-2">
                         <Label>Address</Label>
-                        <Input 
-                          value={university.address} 
-                          onChange={(e) => handleUniversityChange("address", e.target.value)} 
+                        <Input
+                          value={university.address}
+                          onChange={(e) => handleUniversityChange("address", e.target.value)}
                         />
                       </div>
                     </TabsContent>
@@ -352,9 +354,9 @@ export default function Home() {
                         <Label>Color Scheme</Label>
                         <ThemeSelector currentTheme={theme} onSelect={setTheme} />
                       </div>
-                      
+
                       <Separator />
-                      
+
                       <div className="space-y-3">
                         <Label>Signature Style</Label>
                         <div className="grid grid-cols-2 gap-3">
@@ -380,8 +382,8 @@ export default function Home() {
             </Card>
 
             {/* Mobile-only Randomize Button */}
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={handleRandomize}
               className="w-full sm:hidden"
             >
@@ -393,13 +395,13 @@ export default function Home() {
           {/* Preview Section */}
           <div className="lg:col-span-7 xl:col-span-8 space-y-8">
             <div className="flex flex-col items-center gap-8">
-              
+
               {/* Front Card */}
               <div className="space-y-4 w-full flex flex-col items-center">
                 <div className="flex items-center justify-between w-full max-w-[540px]">
                   <h3 className="font-semibold text-slate-500">Front Side</h3>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
                     className="hover:bg-primary/5 hover:text-primary hover:border-primary/30"
                     onClick={() => handleDownload(frontRef, `KTM-${student.nim}-Front`)}
@@ -408,14 +410,14 @@ export default function Home() {
                     Download PNG
                   </Button>
                 </div>
-                
+
                 <div className="relative group perspective-1000">
                   <div className="relative transition-transform duration-500 group-hover:scale-[1.02]">
                     <div ref={frontRef}>
-                      <KTMCardFront 
-                        student={student} 
-                        university={university} 
-                        theme={theme} 
+                      <KTMCardFront
+                        student={student}
+                        university={university}
+                        theme={theme}
                       />
                     </div>
                   </div>
@@ -426,8 +428,8 @@ export default function Home() {
               <div className="space-y-4 w-full flex flex-col items-center">
                 <div className="flex items-center justify-between w-full max-w-[540px]">
                   <h3 className="font-semibold text-slate-500">Back Side</h3>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
                     className="hover:bg-primary/5 hover:text-primary hover:border-primary/30"
                     onClick={() => handleDownload(backRef, `KTM-${student.nim}-Back`)}
@@ -436,20 +438,20 @@ export default function Home() {
                     Download PNG
                   </Button>
                 </div>
-                
+
                 <div className="relative group perspective-1000">
                   <div className="relative transition-transform duration-500 group-hover:scale-[1.02]">
                     <div ref={backRef}>
-                      <KTMCardBack 
-                        student={student} 
-                        university={university} 
-                        theme={theme} 
+                      <KTMCardBack
+                        student={student}
+                        university={university}
+                        theme={theme}
                       />
                     </div>
                   </div>
                 </div>
               </div>
-              
+
             </div>
           </div>
 

@@ -18,6 +18,10 @@ export default defineConfig({
   },
   root: path.resolve(__dirname, "client"),
   base: "/Web-Deploy-Helper/",
+  define: {
+    // Disable API calls for static hosting
+    "import.meta.env.VITE_API_ENABLED": "false",
+  },
   build: {
     outDir: path.resolve(__dirname, "docs"),
     emptyOutDir: true,
