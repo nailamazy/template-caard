@@ -17,6 +17,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      VITE_BASE_PATH: ${{ vars.VITE_BASE_PATH || '/template-caard/' }}
     steps:
       - uses: actions/checkout@v4
 
