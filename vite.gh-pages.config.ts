@@ -9,6 +9,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default defineConfig({
+  base:
+    process.env.VITE_BASE_PATH && process.env.VITE_BASE_PATH.trim().length > 0
+      ? process.env.VITE_BASE_PATH
+      : "/template-caard/",
   plugins: [react(), runtimeErrorOverlay()],
   resolve: {
     alias: {
@@ -17,7 +21,6 @@ export default defineConfig({
     },
   },
   root: path.resolve(__dirname, "client"),
-  base: "/Web-Deploy-Helper/",
   define: {
     // Disable API calls for static hosting
     "import.meta.env.VITE_API_ENABLED": "false",
