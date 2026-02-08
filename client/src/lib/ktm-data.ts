@@ -5,10 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const sig1 = "/images/signature1.png";
-const sig2 = "/images/signature2.png";
-const sig3 = "/images/signature3.png";
-const sig4 = "/images/signature4.png";
+const assetBase = import.meta.env.BASE_URL;
+const sig1 = `${assetBase}images/signature1.png`;
+const sig2 = `${assetBase}images/signature2.png`;
+const sig3 = `${assetBase}images/signature3.png`;
+const sig4 = `${assetBase}images/signature4.png`;
 
 export const signatureImages = [sig1, sig2, sig3, sig4];
 
@@ -176,6 +177,56 @@ function generateDiterbitkan(): string {
   return `${dd}/${mm}/${yyyy}`;
 }
 
+export const jenjangDurasiTahun: Record<string, number> = {
+  D3: 3,
+  D4: 4,
+  S1: 4,
+  S2: 2,
+  S3: 4,
+};
+
+export const bulanList = [
+  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+];
+
+function parseTanggalDDMMYYYY(value: string): Date | null {
+  const [dd, mm, yyyy] = value.split("/").map(Number);
+
+  if (!Number.isInteger(dd) || !Number.isInteger(mm) || !Number.isInteger(yyyy)) {
+    return null;
+  }
+
+  const parsed = new Date(yyyy, mm - 1, dd);
+  if (
+    parsed.getFullYear() !== yyyy ||
+    parsed.getMonth() !== mm - 1 ||
+    parsed.getDate() !== dd
+  ) {
+    return null;
+  }
+
+  return parsed;
+}
+
+export function calculateMasaAktifByJenjang(jenjang: string, diterbitkan?: string): string {
+  const durasiTahun = jenjangDurasiTahun[jenjang] ?? 4;
+  const tanggalTerbit = diterbitkan ? parseTanggalDDMMYYYY(diterbitkan) : null;
+  const baseDate = tanggalTerbit ?? new Date();
+
+  const tanggalAktif = new Date(baseDate);
+  tanggalAktif.setFullYear(tanggalAktif.getFullYear() + durasiTahun);
+
+  const day = tanggalAktif.getDate();
+  const month = bulanList[tanggalAktif.getMonth()];
+  const year = tanggalAktif.getFullYear();
+
+  return `${day} - ${month} - ${year}`;
+}
+
+const defaultDiterbitkan = generateDiterbitkan();
+const defaultJenjang = "S1";
+
 export const defaultStudent: StudentData = {
   nama: "Hendra Wijaya",
   nim: "20243704854",
@@ -183,14 +234,14 @@ export const defaultStudent: StudentData = {
   tanggalLahir: "27/08/2006",
   fakultas: "Fakultas Keguruan dan Ilmu Pendidikan",
   programStudi: "Pendidikan Bahasa Inggris",
-  jenjang: "S1",
+  jenjang: defaultJenjang,
   tahunAkademik: "2024 - 2028",
-  masaAktif: "14 - Maret - 2028",
+  masaAktif: calculateMasaAktifByJenjang(defaultJenjang, defaultDiterbitkan),
   dosenWali: "Dr. Dedi Kurniawan, S.T., M.T.",
   jenisKelamin: "Laki-laki",
   photoUrl: null,
   noKartu: generateNoKartu("20243704854"),
-  diterbitkan: generateDiterbitkan(),
+  diterbitkan: defaultDiterbitkan,
   signatureIndex: 0,
 };
 
@@ -245,11 +296,6 @@ export const dosenWaliList = [
   "Prof. Dr. Nurul Huda, M.A.",
 ];
 
-export const bulanList = [
-  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
-];
-
 export function generateRandomNIM(): string {
   const year = "2024";
   const random = Math.floor(Math.random() * 9000000 + 1000000).toString();
@@ -275,13 +321,11 @@ export function generateRandomStudent(): StudentData {
   const nim = generateRandomNIM();
   const sigIdx = Math.floor(Math.random() * signatureImages.length);
 
-  const masaDay = Math.floor(Math.random() * 28 + 1);
-  const masaMonth = bulanList[Math.floor(Math.random() * 12)];
-  const masaYear = Math.floor(Math.random() * 3 + 2027);
-
   const diterbitDay = Math.floor(Math.random() * 28 + 1).toString().padStart(2, '0');
   const diterbitMonth = Math.floor(Math.random() * 12 + 1).toString().padStart(2, '0');
   const diterbitYear = Math.floor(Math.random() * 2 + 2025);
+  const diterbitkan = `${diterbitDay}/${diterbitMonth}/${diterbitYear}`;
+  const masaAktif = calculateMasaAktifByJenjang(jenjang, diterbitkan);
 
   return {
     nama,
@@ -292,12 +336,12 @@ export function generateRandomStudent(): StudentData {
     programStudi: "Ilmu Komunikasi",
     jenjang,
     tahunAkademik: "2024 - 2028",
-    masaAktif: `${masaDay} - ${masaMonth} - ${masaYear}`,
+    masaAktif,
     dosenWali: dosen,
     jenisKelamin: isLaki ? "Laki-laki" : "Perempuan",
     photoUrl: null,
     noKartu: generateNoKartu(nim),
-    diterbitkan: `${diterbitDay}/${diterbitMonth}/${diterbitYear}`,
+    diterbitkan,
     signatureIndex: sigIdx,
   };
 }

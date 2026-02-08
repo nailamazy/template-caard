@@ -4,17 +4,31 @@ import {
   defaultUniversity,
   cardThemes,
   generateRandomStudent,
+  calculateMasaAktifByJenjang,
   type StudentData,
   type UniversityData,
   fakultasList,
   jenjangList
 } from "@/lib/ktm-data";
+import {
+  cardTemplateModels,
+  defaultCardTemplateModel,
+  type UploadedCardTemplate,
+} from "@/lib/card-templates";
 import { KTMCardFront } from "@/components/ktm-card-front";
 import { KTMCardBack } from "@/components/ktm-card-back";
 import { ThemeSelector } from "@/components/ThemeSelector";
 import { useCreateCard } from "@/hooks/use-cards";
 import { useToast } from "@/hooks/use-toast";
 import html2canvas from "html2canvas";
+import {
+  CARD_PREVIEW_WIDTH_PX,
+  ID1_CARD_HEIGHT_MM,
+  ID1_CARD_WIDTH_MM,
+  ID1_EXPORT_DPI,
+  ID1_EXPORT_HEIGHT_PX,
+  ID1_EXPORT_WIDTH_PX,
+} from "@/lib/card-dimensions";
 
 // UI Components
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -28,7 +42,6 @@ import {
   Download,
   Shuffle,
   Save,
-  RotateCw,
   Upload,
   GraduationCap,
   User,
@@ -40,16 +53,34 @@ export default function Home() {
   const [student, setStudent] = useState<StudentData>(defaultStudent);
   const [university, setUniversity] = useState<UniversityData>(defaultUniversity);
   const [theme, setTheme] = useState(cardThemes[0]);
+  const [selectedTemplateModelId, setSelectedTemplateModelId] = useState(defaultCardTemplateModel.id);
+  const [uploadedTemplates, setUploadedTemplates] = useState<UploadedCardTemplate[]>([]);
+  const [selectedUploadedTemplateId, setSelectedUploadedTemplateId] = useState("none");
+  const [templateNameInput, setTemplateNameInput] = useState("");
+  const [pendingFrontTemplateImage, setPendingFrontTemplateImage] = useState<string | null>(null);
+  const [pendingBackTemplateImage, setPendingBackTemplateImage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("student");
+  const [isCustomCardNumber, setIsCustomCardNumber] = useState(false);
 
   const frontRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const createCardMutation = useCreateCard();
 
+  const buildNoKartu = (nim: string) => `KTM-${nim}-${new Date().getFullYear()}`;
+  const selectedTemplateModel =
+    cardTemplateModels.find((model) => model.id === selectedTemplateModelId) || defaultCardTemplateModel;
+  const selectedUploadedTemplate =
+    uploadedTemplates.find((template) => template.id === selectedUploadedTemplateId) || null;
+  const frontTemplateBackgroundUrl =
+    selectedUploadedTemplate?.frontImageUrl || selectedUploadedTemplate?.backImageUrl || null;
+  const backTemplateBackgroundUrl =
+    selectedUploadedTemplate?.backImageUrl || selectedUploadedTemplate?.frontImageUrl || null;
+
   const handleRandomize = () => {
     const randomStudent = generateRandomStudent();
     setStudent(randomStudent);
+    setIsCustomCardNumber(false);
     toast({
       title: "Data Randomized",
       description: "Student data has been filled with random values.",
@@ -60,8 +91,12 @@ export default function Home() {
     if (!elementRef.current) return;
 
     try {
+      const exportScale = Math.min(
+        ID1_EXPORT_WIDTH_PX / elementRef.current.offsetWidth,
+        ID1_EXPORT_HEIGHT_PX / elementRef.current.offsetHeight,
+      );
       const canvas = await html2canvas(elementRef.current, {
-        scale: 2, // Higher resolution
+        scale: exportScale,
         useCORS: true,
         backgroundColor: null,
       });
@@ -73,7 +108,7 @@ export default function Home() {
 
       toast({
         title: "Download Started",
-        description: `Downloading ${fileName}...`,
+        description: `Downloading ${fileName} (${ID1_CARD_WIDTH_MM} x ${ID1_CARD_HEIGHT_MM} mm @ ${ID1_EXPORT_DPI} DPI)...`,
       });
     } catch (err) {
       console.error(err);
@@ -118,8 +153,95 @@ export default function Home() {
     }
   };
 
+  const handleTemplateImageUpload = (e: React.ChangeEvent<HTMLInputElement>, side: "front" | "back") => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast({
+        variant: "destructive",
+        title: "Format Tidak Didukung",
+        description: "Upload template harus berupa file gambar.",
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (side === "front") {
+        setPendingFrontTemplateImage(reader.result as string);
+      } else {
+        setPendingBackTemplateImage(reader.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveUploadedTemplate = () => {
+    if (!pendingFrontTemplateImage && !pendingBackTemplateImage) {
+      toast({
+        variant: "destructive",
+        title: "Template Belum Lengkap",
+        description: "Upload minimal satu gambar template (front atau back).",
+      });
+      return;
+    }
+
+    const templateName = templateNameInput.trim() || `Template Upload ${uploadedTemplates.length + 1}`;
+    const templateId = `uploaded-${Date.now()}`;
+    const newTemplate: UploadedCardTemplate = {
+      id: templateId,
+      name: templateName,
+      frontImageUrl: pendingFrontTemplateImage,
+      backImageUrl: pendingBackTemplateImage,
+    };
+
+    setUploadedTemplates((prev) => [newTemplate, ...prev]);
+    setSelectedUploadedTemplateId(templateId);
+    setTemplateNameInput("");
+    setPendingFrontTemplateImage(null);
+    setPendingBackTemplateImage(null);
+
+    toast({
+      title: "Template Disimpan",
+      description: `${templateName} sudah masuk ke pilihan template.`,
+    });
+  };
+
   const handleStudentChange = (key: keyof StudentData, value: string) => {
-    setStudent(prev => ({ ...prev, [key]: value }));
+    setStudent((prev) => {
+      if (key === "nim") {
+        const next = { ...prev, nim: value };
+
+        // Keep noKartu synced with NIM unless user has edited it manually.
+        if (!isCustomCardNumber) {
+          next.noKartu = buildNoKartu(value);
+        }
+        return next;
+      }
+
+      if (key === "jenjang") {
+        return {
+          ...prev,
+          jenjang: value,
+          masaAktif: calculateMasaAktifByJenjang(value, prev.diterbitkan),
+        };
+      }
+
+      if (key === "diterbitkan") {
+        return {
+          ...prev,
+          diterbitkan: value,
+          masaAktif: calculateMasaAktifByJenjang(prev.jenjang, value),
+        };
+      }
+
+      if (key === "noKartu") {
+        setIsCustomCardNumber(value !== buildNoKartu(prev.nim));
+      }
+
+      return { ...prev, [key]: value };
+    });
   };
 
   const handleUniversityChange = (key: keyof UniversityData, value: string) => {
@@ -242,6 +364,14 @@ export default function Home() {
                         </div>
 
                         <div className="space-y-2">
+                          <Label>No. Kartu</Label>
+                          <Input
+                            value={student.noKartu}
+                            onChange={(e) => handleStudentChange("noKartu", e.target.value)}
+                          />
+                        </div>
+
+                        <div className="space-y-2">
                           <Label>Place of Birth</Label>
                           <Input
                             value={student.tempatLahir}
@@ -307,6 +437,24 @@ export default function Home() {
                             onChange={(e) => handleStudentChange("dosenWali", e.target.value)}
                           />
                         </div>
+
+                        <div className="space-y-2 col-span-2">
+                          <Label>Tanggal Diterbitkan</Label>
+                          <Input
+                            value={student.diterbitkan}
+                            onChange={(e) => handleStudentChange("diterbitkan", e.target.value)}
+                            placeholder="DD/MM/YYYY"
+                          />
+                        </div>
+
+                        <div className="space-y-2 col-span-2">
+                          <Label>Masa Aktif</Label>
+                          <Input
+                            value={student.masaAktif}
+                            onChange={(e) => handleStudentChange("masaAktif", e.target.value)}
+                            placeholder="14 - Maret - 2028"
+                          />
+                        </div>
                       </div>
                     </TabsContent>
 
@@ -351,8 +499,114 @@ export default function Home() {
 
                     <TabsContent value="theme" className="mt-0 space-y-6">
                       <div className="space-y-3">
+                        <Label>Template Model</Label>
+                        <div className="grid grid-cols-1 gap-2">
+                          {cardTemplateModels.map((model) => (
+                            <button
+                              key={model.id}
+                              onClick={() => setSelectedTemplateModelId(model.id)}
+                              className={`
+                                w-full rounded-lg border p-3 text-left transition-all
+                                hover:border-primary/50 hover:bg-primary/5
+                                ${selectedTemplateModel.id === model.id ? "border-primary ring-1 ring-primary/40 bg-primary/5" : "border-slate-200 bg-white"}
+                              `}
+                            >
+                              <div className="text-sm font-semibold text-slate-800">{model.name}</div>
+                              <div className="text-xs text-slate-500 mt-1">{model.description}</div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      <div className="space-y-3">
                         <Label>Color Scheme</Label>
                         <ThemeSelector currentTheme={theme} onSelect={setTheme} />
+                      </div>
+
+                      <Separator />
+
+                      <div className="space-y-3">
+                        <Label>Upload Template (Background)</Label>
+                        <Input
+                          placeholder="Nama template upload"
+                          value={templateNameInput}
+                          onChange={(e) => setTemplateNameInput(e.target.value)}
+                        />
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="space-y-2">
+                            <Label className="text-xs text-muted-foreground">Front Background</Label>
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleTemplateImageUpload(e, "front")}
+                              className="cursor-pointer file:cursor-pointer"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-xs text-muted-foreground">Back Background</Label>
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleTemplateImageUpload(e, "back")}
+                              className="cursor-pointer file:cursor-pointer"
+                            />
+                          </div>
+                        </div>
+
+                        {(pendingFrontTemplateImage || pendingBackTemplateImage) && (
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1">
+                              <div className="text-[11px] text-slate-500">Preview Front</div>
+                              <div className="h-16 rounded border bg-slate-100 overflow-hidden">
+                                {pendingFrontTemplateImage ? (
+                                  <img src={pendingFrontTemplateImage} alt="Template Front Preview" className="h-full w-full object-cover" />
+                                ) : (
+                                  <div className="h-full w-full flex items-center justify-center text-[11px] text-slate-400">Tidak diisi</div>
+                                )}
+                              </div>
+                            </div>
+                            <div className="space-y-1">
+                              <div className="text-[11px] text-slate-500">Preview Back</div>
+                              <div className="h-16 rounded border bg-slate-100 overflow-hidden">
+                                {pendingBackTemplateImage ? (
+                                  <img src={pendingBackTemplateImage} alt="Template Back Preview" className="h-full w-full object-cover" />
+                                ) : (
+                                  <div className="h-full w-full flex items-center justify-center text-[11px] text-slate-400">Tidak diisi</div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={handleSaveUploadedTemplate}
+                        >
+                          <Upload className="mr-2 h-4 w-4" />
+                          Simpan Template Upload
+                        </Button>
+
+                        <div className="space-y-2">
+                          <Label>Pilih Template Upload</Label>
+                          <Select
+                            value={selectedUploadedTemplateId}
+                            onValueChange={(value) => setSelectedUploadedTemplateId(value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih template upload" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">Tanpa Template Upload</SelectItem>
+                              {uploadedTemplates.map((item) => (
+                                <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
 
                       <Separator />
@@ -398,7 +652,10 @@ export default function Home() {
 
               {/* Front Card */}
               <div className="space-y-4 w-full flex flex-col items-center">
-                <div className="flex items-center justify-between w-full max-w-[540px]">
+                <div
+                  className="flex items-center justify-between w-full"
+                  style={{ maxWidth: `${CARD_PREVIEW_WIDTH_PX}px` }}
+                >
                   <h3 className="font-semibold text-slate-500">Front Side</h3>
                   <Button
                     variant="outline"
@@ -418,6 +675,8 @@ export default function Home() {
                         student={student}
                         university={university}
                         theme={theme}
+                        templateModel={selectedTemplateModel}
+                        templateBackgroundUrl={frontTemplateBackgroundUrl}
                       />
                     </div>
                   </div>
@@ -426,7 +685,10 @@ export default function Home() {
 
               {/* Back Card */}
               <div className="space-y-4 w-full flex flex-col items-center">
-                <div className="flex items-center justify-between w-full max-w-[540px]">
+                <div
+                  className="flex items-center justify-between w-full"
+                  style={{ maxWidth: `${CARD_PREVIEW_WIDTH_PX}px` }}
+                >
                   <h3 className="font-semibold text-slate-500">Back Side</h3>
                   <Button
                     variant="outline"
@@ -446,6 +708,8 @@ export default function Home() {
                         student={student}
                         university={university}
                         theme={theme}
+                        templateModel={selectedTemplateModel}
+                        templateBackgroundUrl={backTemplateBackgroundUrl}
                       />
                     </div>
                   </div>
