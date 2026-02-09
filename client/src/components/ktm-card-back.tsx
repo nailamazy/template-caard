@@ -1,8 +1,6 @@
 import Barcode from "react-barcode";
 import type { StudentData, UniversityData, CardTheme } from "@/lib/ktm-data";
 import { cardThemes, signatureImages } from "@/lib/ktm-data";
-import type { CardTemplateModel } from "@/lib/card-templates";
-import { defaultCardTemplateModel } from "@/lib/card-templates";
 import {
   CARD_PREVIEW_HEIGHT_PX,
   CARD_PREVIEW_RADIUS_PX,
@@ -13,7 +11,6 @@ interface KTMCardBackProps {
   student: StudentData;
   university: UniversityData;
   theme?: CardTheme;
-  templateModel?: CardTemplateModel;
   templateBackgroundUrl?: string | null;
 }
 
@@ -21,22 +18,11 @@ export function KTMCardBack({
   student,
   university,
   theme,
-  templateModel,
   templateBackgroundUrl,
 }: KTMCardBackProps) {
   const t = theme || cardThemes[0];
-  const model = templateModel || defaultCardTemplateModel;
-  const isExecutive = model.id === "executive";
-  const isModern = model.id === "modern";
-  const isMinimal = model.id === "minimal";
-  const cardOutline = isExecutive ? `1.5px solid ${t.photoBorder}44` : "none";
-  const headerPadding = isMinimal ? "12px 14px" : isExecutive ? "14px 20px" : "16px 20px";
-  const contentPadding = isMinimal ? "10px 14px" : "16px 20px";
-  const contentFontSize = isMinimal ? "7.8px" : "8.5px";
-  const footerPadding = isMinimal ? "6px 14px 8px" : "8px 20px 12px";
-  const bottomBarHeight = isMinimal ? "4px" : "6px";
-  const signatureBoxWidth = isMinimal ? "140px" : "165px";
-  const signatureLineWidth = isMinimal ? "130px" : "150px";
+  const sigImg = signatureImages[student.signatureIndex % signatureImages.length];
+
   const terms = [
     `Kartu ini merupakan identitas resmi mahasiswa ${university.name}.`,
     "Kartu ini tidak dapat dipindahtangankan kepada pihak lain.",
@@ -45,7 +31,6 @@ export function KTMCardBack({
     "Kartu ini berlaku selama mahasiswa berstatus aktif.",
     "Jika kartu hilang atau rusak, segera lapor ke bagian akademik.",
   ];
-  const sigImg = signatureImages[student.signatureIndex % signatureImages.length];
 
   return (
     <div
@@ -59,162 +44,134 @@ export function KTMCardBack({
         position: "relative",
         backgroundColor: "#ffffff",
         boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-        display: "flex",
-        flexDirection: "column",
-        border: cardOutline,
       }}
     >
       {templateBackgroundUrl && (
-        <div
+        <img
+          src={templateBackgroundUrl}
+          alt="Template Back"
           style={{
             position: "absolute",
             inset: 0,
-            backgroundImage: `url(${templateBackgroundUrl})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            opacity: isMinimal ? 0.3 : 0.24,
-            zIndex: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
           }}
         />
       )}
-
-      {isModern && (
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background:
-              "radial-gradient(circle at 10% 24%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 50%), radial-gradient(circle at 78% 80%, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 46%)",
-            zIndex: 0,
-          }}
-        />
-      )}
-
-      <div style={{ position: "relative", zIndex: 1, height: "100%", display: "flex", flexDirection: "column" }}>
-      <div
-        style={{
-          background: t.gradient,
-          padding: headerPadding,
-          color: "white",
-          textAlign: isExecutive ? "left" : "center",
-        }}
-      >
-        <div style={{ fontSize: isMinimal ? "10px" : "12px", fontWeight: 700, letterSpacing: isMinimal ? "1.5px" : "2px", textTransform: "uppercase" }}>
-          SYARAT DAN KETENTUAN
-        </div>
-      </div>
-
-      <div style={{ padding: contentPadding, flex: 1, fontSize: contentFontSize, color: "#444", lineHeight: isMinimal ? "1.45" : "1.6" }}>
-        {isModern ? (
-          <ul style={{ margin: 0, paddingLeft: "14px", listStyleType: "none" }}>
-            {terms.map((item, i) => (
-              <li key={i} style={{ marginBottom: "4px", position: "relative", paddingLeft: "10px" }}>
-                <span style={{ position: "absolute", left: 0, color: t.accentColor, fontWeight: 700 }}>✓</span>
-                {item}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <ol style={{ margin: 0, paddingLeft: "16px" }}>
-            {terms.map((item, i) => (
-              <li key={i} style={{ marginBottom: "4px" }}>{item}</li>
-            ))}
-          </ol>
-        )}
-      </div>
-
-      <div
-        style={{
-          borderTop: "1px solid #e5e7eb",
-          padding: footerPadding,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-end",
-        }}
-      >
-        <div style={{ fontSize: "6.5px", color: "#888", lineHeight: "1.5" }}>
-          <div>No. Kartu: {student.noKartu}</div>
-          <div>Diterbitkan: {student.diterbitkan}</div>
-          <div style={{ marginTop: "4px" }}>
-            <Barcode
-              value={student.noKartu || "KTM-0000"}
-              width={1}
-              height={22}
-              fontSize={0}
-              margin={0}
-              displayValue={false}
-              background="transparent"
-            />
-          </div>
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: signatureBoxWidth }}>
-          <div style={{ fontSize: isMinimal ? "7px" : "8px", color: "#666", marginBottom: "2px" }}>Dosen Wali,</div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: isMinimal ? "44px" : "52px", width: "100%" }}>
-            <img
-              src={sigImg}
-              alt="Tanda Tangan"
-              style={{
-                height: isMinimal ? "42px" : "50px",
-                width: "auto",
-                maxWidth: signatureLineWidth,
-                objectFit: "contain",
-              }}
-            />
-          </div>
-          <div style={{ width: signatureLineWidth, borderTop: "1px solid #333", paddingTop: "3px", textAlign: "center" }}>
-            <span style={{ fontSize: isMinimal ? "6.5px" : "7.5px", color: "#333", fontWeight: 600 }}>
-              {student.dosenWali}
-            </span>
-          </div>
-        </div>
-
-        <div>
-          {university.logoUrl ? (
-            <img
-              src={university.logoUrl}
-              alt="Logo"
-              style={{
-                width: isMinimal ? "34px" : "40px",
-                height: isMinimal ? "34px" : "40px",
-                borderRadius: "50%",
-                objectFit: "cover",
-                opacity: 0.5,
-              }}
-            />
-          ) : (
-            <div
-              style={{
-                width: isMinimal ? "34px" : "40px",
-                height: isMinimal ? "34px" : "40px",
-                borderRadius: "50%",
-                backgroundColor: t.photoBg,
-                border: `1px solid ${t.photoBorder}33`,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "7px",
-                color: t.accentColor,
-                opacity: 0.6,
-                fontWeight: 600,
-              }}
-            >
-              LOGO
-            </div>
-          )}
-        </div>
-      </div>
 
       <div
         style={{
           position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: bottomBarHeight,
-          background: t.bottomBar,
+          inset: 0,
+          padding: "52px 18px 48px",
+          display: "flex",
         }}
-      />
+      >
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            borderRadius: "8px",
+            backgroundColor: "rgba(255,255,255,0.88)",
+            border: "1px solid rgba(15,23,42,0.12)",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+            display: "flex",
+            flexDirection: "column",
+            minHeight: 0,
+          }}
+        >
+          <div style={{ padding: "8px 10px 6px", borderBottom: "1px solid rgba(15,23,42,0.1)" }}>
+            <div
+              style={{
+                padding: "3px 8px",
+                borderRadius: "999px",
+                backgroundColor: `${t.accentColor}19`,
+                color: "#0f172a",
+                fontSize: "8px",
+                fontWeight: 800,
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+                textAlign: "center",
+              }}
+            >
+              Syarat dan Ketentuan
+            </div>
+          </div>
+
+          <div style={{ padding: "8px 12px", flex: 1, minHeight: 0, color: "#1f2937" }}>
+            <ol style={{ margin: 0, paddingLeft: "14px", fontSize: "7px", lineHeight: "1.45" }}>
+              {terms.map((item, index) => (
+                <li key={index} style={{ marginBottom: "4px" }}>
+                  {item}
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <div style={{ borderTop: "1px solid rgba(15,23,42,0.1)", padding: "6px 10px", display: "flex", justifyContent: "space-between", gap: "8px", alignItems: "flex-end" }}>
+            <div style={{ fontSize: "6.3px", color: "#475569", lineHeight: "1.35" }}>
+              <div>No. Kartu: {student.noKartu}</div>
+              <div>Diterbitkan: {student.diterbitkan}</div>
+              <div style={{ marginTop: "3px" }}>
+                <Barcode
+                  value={student.noKartu || "KTM-0000"}
+                  width={0.82}
+                  height={16}
+                  fontSize={0}
+                  margin={0}
+                  displayValue={false}
+                  background="transparent"
+                />
+              </div>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "132px", flexShrink: 0 }}>
+              <div style={{ fontSize: "6.6px", color: "#64748b", marginBottom: "2px" }}>Dosen Wali,</div>
+              <div style={{ height: "36px", display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
+                <img src={sigImg} alt="Tanda Tangan" style={{ height: "34px", width: "auto", maxWidth: "120px", objectFit: "contain" }} />
+              </div>
+              <div style={{ width: "120px", borderTop: "1px solid #334155", paddingTop: "2px", textAlign: "center" }}>
+                <span style={{ fontSize: "6.2px", color: "#1e293b", fontWeight: 700 }}>{student.dosenWali}</span>
+              </div>
+            </div>
+
+            <div>
+              {university.logoUrl ? (
+                <img
+                  src={university.logoUrl}
+                  alt="Logo"
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    opacity: 0.45,
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: t.photoBg,
+                    border: `1px solid ${t.photoBorder}88`,
+                    fontSize: "6px",
+                    fontWeight: 700,
+                    color: t.accentColor,
+                    opacity: 0.75,
+                  }}
+                >
+                  LOGO
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

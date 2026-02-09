@@ -1,33 +1,25 @@
-export type CardTemplateLayout = "classic" | "executive" | "modern" | "minimal";
+const assetBase = import.meta.env.BASE_URL;
 
-export interface CardTemplateModel {
-  id: CardTemplateLayout;
+export interface BuiltInCardTemplate {
+  id: string;
   name: string;
-  description: string;
+  frontImageUrl: string;
+  backImageUrl: string;
 }
 
-export const cardTemplateModels: CardTemplateModel[] = [
-  {
-    id: "classic",
-    name: "Classic Kampus",
-    description: "Model standar formal dengan komposisi data seimbang.",
-  },
-  {
-    id: "executive",
-    name: "Executive",
-    description: "Tampilan tegas dengan orientasi konten yang lebih premium.",
-  },
-  {
-    id: "modern",
-    name: "Modern Split",
-    description: "Nuansa modern dengan aksen visual dan ritme layout dinamis.",
-  },
-  {
-    id: "minimal",
-    name: "Minimal Clean",
-    description: "Model ringkas, fokus pada data utama dan keterbacaan.",
-  },
-];
+export const builtInCardTemplates: BuiltInCardTemplate[] = Array.from({ length: 16 }, (_, index) => {
+  const file = `${index + 1}.png`;
+  const imageUrl = `${assetBase}templates/${file}`;
+
+  return {
+    id: `template-${index + 1}`,
+    name: `Template ${index + 1}`,
+    frontImageUrl: imageUrl,
+    backImageUrl: imageUrl,
+  };
+});
+
+export const defaultBuiltInCardTemplate = builtInCardTemplates[0];
 
 export interface UploadedCardTemplate {
   id: string;
@@ -35,5 +27,3 @@ export interface UploadedCardTemplate {
   frontImageUrl: string | null;
   backImageUrl: string | null;
 }
-
-export const defaultCardTemplateModel = cardTemplateModels[0];

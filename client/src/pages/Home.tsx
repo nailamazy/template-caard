@@ -11,13 +11,12 @@ import {
   jenjangList
 } from "@/lib/ktm-data";
 import {
-  cardTemplateModels,
-  defaultCardTemplateModel,
+  builtInCardTemplates,
+  defaultBuiltInCardTemplate,
   type UploadedCardTemplate,
 } from "@/lib/card-templates";
 import { KTMCardFront } from "@/components/ktm-card-front";
 import { KTMCardBack } from "@/components/ktm-card-back";
-import { ThemeSelector } from "@/components/ThemeSelector";
 import { useCreateCard } from "@/hooks/use-cards";
 import { useToast } from "@/hooks/use-toast";
 import html2canvas from "html2canvas";
@@ -53,7 +52,7 @@ export default function Home() {
   const [student, setStudent] = useState<StudentData>(defaultStudent);
   const [university, setUniversity] = useState<UniversityData>(defaultUniversity);
   const [theme, setTheme] = useState(cardThemes[0]);
-  const [selectedTemplateModelId, setSelectedTemplateModelId] = useState(defaultCardTemplateModel.id);
+  const [selectedBuiltInTemplateId, setSelectedBuiltInTemplateId] = useState(defaultBuiltInCardTemplate.id);
   const [uploadedTemplates, setUploadedTemplates] = useState<UploadedCardTemplate[]>([]);
   const [selectedUploadedTemplateId, setSelectedUploadedTemplateId] = useState("none");
   const [templateNameInput, setTemplateNameInput] = useState("");
@@ -68,14 +67,14 @@ export default function Home() {
   const createCardMutation = useCreateCard();
 
   const buildNoKartu = (nim: string) => `KTM-${nim}-${new Date().getFullYear()}`;
-  const selectedTemplateModel =
-    cardTemplateModels.find((model) => model.id === selectedTemplateModelId) || defaultCardTemplateModel;
+  const selectedBuiltInTemplate =
+    builtInCardTemplates.find((item) => item.id === selectedBuiltInTemplateId) || defaultBuiltInCardTemplate;
   const selectedUploadedTemplate =
     uploadedTemplates.find((template) => template.id === selectedUploadedTemplateId) || null;
   const frontTemplateBackgroundUrl =
-    selectedUploadedTemplate?.frontImageUrl || selectedUploadedTemplate?.backImageUrl || null;
+    selectedUploadedTemplate?.frontImageUrl || selectedUploadedTemplate?.backImageUrl || selectedBuiltInTemplate.frontImageUrl;
   const backTemplateBackgroundUrl =
-    selectedUploadedTemplate?.backImageUrl || selectedUploadedTemplate?.frontImageUrl || null;
+    selectedUploadedTemplate?.backImageUrl || selectedUploadedTemplate?.frontImageUrl || selectedBuiltInTemplate.backImageUrl;
 
   const handleRandomize = () => {
     const randomStudent = generateRandomStudent();
@@ -322,7 +321,7 @@ export default function Home() {
                     </TabsTrigger>
                   </TabsList>
 
-                  <div className="p-6 max-h-[calc(100vh-300px)] overflow-y-auto">
+                  <div className="p-6 max-h-[calc(100vh-220px)] overflow-y-auto">
                     <TabsContent value="student" className="mt-0 space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2 col-span-2">
@@ -499,20 +498,22 @@ export default function Home() {
 
                     <TabsContent value="theme" className="mt-0 space-y-6">
                       <div className="space-y-3">
-                        <Label>Template Model</Label>
-                        <div className="grid grid-cols-1 gap-2">
-                          {cardTemplateModels.map((model) => (
+                        <Label>Template ID Card (Bawaan)</Label>
+                        <div className="grid grid-cols-2 gap-3">
+                          {builtInCardTemplates.map((item) => (
                             <button
-                              key={model.id}
-                              onClick={() => setSelectedTemplateModelId(model.id)}
+                              key={item.id}
+                              onClick={() => setSelectedBuiltInTemplateId(item.id)}
                               className={`
-                                w-full rounded-lg border p-3 text-left transition-all
+                                rounded-lg border p-2 text-left transition-all
                                 hover:border-primary/50 hover:bg-primary/5
-                                ${selectedTemplateModel.id === model.id ? "border-primary ring-1 ring-primary/40 bg-primary/5" : "border-slate-200 bg-white"}
+                                ${selectedBuiltInTemplate.id === item.id ? "border-primary ring-1 ring-primary/40 bg-primary/5" : "border-slate-200 bg-white"}
                               `}
                             >
-                              <div className="text-sm font-semibold text-slate-800">{model.name}</div>
-                              <div className="text-xs text-slate-500 mt-1">{model.description}</div>
+                              <div className="w-full h-16 rounded border border-slate-200 overflow-hidden bg-slate-100">
+                                <img src={item.frontImageUrl} alt={item.name} className="w-full h-full object-cover" />
+                              </div>
+                              <div className="text-xs font-semibold text-slate-800 mt-2">{item.name}</div>
                             </button>
                           ))}
                         </div>
@@ -521,14 +522,7 @@ export default function Home() {
                       <Separator />
 
                       <div className="space-y-3">
-                        <Label>Color Scheme</Label>
-                        <ThemeSelector currentTheme={theme} onSelect={setTheme} />
-                      </div>
-
-                      <Separator />
-
-                      <div className="space-y-3">
-                        <Label>Upload Template (Background)</Label>
+                        <Label>Upload Template Custom (Opsional)</Label>
                         <Input
                           placeholder="Nama template upload"
                           value={templateNameInput}
@@ -675,7 +669,6 @@ export default function Home() {
                         student={student}
                         university={university}
                         theme={theme}
-                        templateModel={selectedTemplateModel}
                         templateBackgroundUrl={frontTemplateBackgroundUrl}
                       />
                     </div>
@@ -708,7 +701,6 @@ export default function Home() {
                         student={student}
                         university={university}
                         theme={theme}
-                        templateModel={selectedTemplateModel}
                         templateBackgroundUrl={backTemplateBackgroundUrl}
                       />
                     </div>
