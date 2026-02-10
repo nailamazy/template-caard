@@ -107,7 +107,7 @@ export function KTMCardFront({
                 <div style={{ fontSize: "20px", fontWeight: 800, color: "#111827", textTransform: "uppercase", lineHeight: "1.2" }}>
                   {university.name}
                 </div>
-                <div style={{ fontSize: "14px", color: "#475569", lineHeight: "1.2", marginTop: "2px" }}>
+                <div style={{ fontSize: "14px", color: "#000000", lineHeight: "1.2", marginTop: "2px", fontWeight: 600 }}>
                   {university.address}
                 </div>
               </div>
@@ -151,7 +151,7 @@ export function KTMCardFront({
                 padding: "6px 15px",
                 borderRadius: "999px",
                 backgroundColor: `${t.accentColor}19`,
-                color: "#0f172a",
+                color: "#000000",
                 fontSize: "16px",
                 fontWeight: 800,
                 textTransform: "uppercase",
@@ -204,12 +204,12 @@ export function KTMCardFront({
                 <tbody>
                   {identityRows.map(([label, value], i) => (
                     <tr key={i}>
-                      <td style={{ fontSize: "14px", color: "#475569", padding: "2px 0", verticalAlign: "top", whiteSpace: "nowrap" }}>{label}</td>
-                      <td style={{ fontSize: "14px", color: "#475569", padding: "2px 6px", verticalAlign: "top" }}>:</td>
+                      <td style={{ fontSize: "14px", color: "#000000", padding: "2px 0", verticalAlign: "top", whiteSpace: "nowrap", fontWeight: 600 }}>{label}</td>
+                      <td style={{ fontSize: "14px", color: "#000000", padding: "2px 6px", verticalAlign: "top", fontWeight: 600 }}>:</td>
                       <td
                         style={{
                           fontSize: "14px",
-                          color: label === "Status" ? t.statusColor : "#111827",
+                          color: label === "Status" ? t.statusColor : "#000000",
                           fontWeight: label === "Nama" || label === "NIM" || label === "Status" ? 700 : 600,
                           padding: "2px 0",
                           verticalAlign: "top",
@@ -226,12 +226,12 @@ export function KTMCardFront({
 
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px", flexShrink: 0 }}>
               <QRCodeSVG value={qrValue} size={97} level="M" style={{ borderRadius: "8px" }} />
-              <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 700 }}>QR</span>
+              <span style={{ fontSize: "12px", color: "#000000", fontWeight: 700 }}>QR</span>
             </div>
           </div>
 
           <div style={{ padding: "11px 19px", display: "flex", justifyContent: "space-between", gap: "15px", alignItems: "flex-end" }}>
-            <div style={{ fontSize: "12px", color: "#475569", lineHeight: "1.35" }}>
+            <div style={{ fontSize: "12px", color: "#000000", lineHeight: "1.35", fontWeight: 600 }}>
               <div>No. Kartu: {student.noKartu}</div>
               <div>Diterbitkan: {student.diterbitkan}</div>
               <div style={{ marginTop: "6px" }}>
@@ -248,12 +248,12 @@ export function KTMCardFront({
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "247px", flexShrink: 0 }}>
-              <div style={{ fontSize: "13px", color: "#64748b", marginBottom: "4px" }}>Dosen Wali,</div>
+              <div style={{ fontSize: "13px", color: "#000000", marginBottom: "4px", fontWeight: 600 }}>Dosen Wali,</div>
               <div style={{ height: "67px", display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
                 <img src={sigImg} alt="Tanda Tangan" style={{ height: "64px", width: "auto", maxWidth: "225px", objectFit: "contain" }} />
               </div>
               <div style={{ width: "225px", borderTop: "2px solid #334155", paddingTop: "4px", textAlign: "center" }}>
-                <span style={{ fontSize: "12px", color: "#1e293b", fontWeight: 700 }}>{student.dosenWali}</span>
+                <span style={{ fontSize: "12px", color: "#000000", fontWeight: 700 }}>{student.dosenWali}</span>
               </div>
             </div>
           </div>
