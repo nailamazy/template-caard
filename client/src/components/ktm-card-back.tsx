@@ -64,7 +64,7 @@ export function KTMCardBack({
         style={{
           position: "absolute",
           inset: 0,
-          padding: "97px 34px 90px",
+          padding: "30px", // Safe area padding
           display: "flex",
         }}
       >
@@ -72,16 +72,12 @@ export function KTMCardBack({
           style={{
             width: "100%",
             height: "100%",
-            borderRadius: "15px",
-            backgroundColor: "rgba(255,255,255,0.88)",
-            border: "2px solid rgba(15,23,42,0.12)",
-            boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
             display: "flex",
             flexDirection: "column",
             minHeight: 0,
           }}
         >
-          <div style={{ padding: "15px 19px 11px", borderBottom: "2px solid rgba(15,23,42,0.1)" }}>
+          <div style={{ padding: "15px 19px 11px" }}>
             <div
               style={{
                 padding: "6px 15px",
@@ -109,7 +105,7 @@ export function KTMCardBack({
             </ol>
           </div>
 
-          <div style={{ borderTop: "2px solid rgba(15,23,42,0.1)", padding: "11px 19px", display: "flex", justifyContent: "space-between", gap: "15px", alignItems: "flex-end" }}>
+          <div style={{ padding: "11px 19px", display: "flex", justifyContent: "space-between", gap: "15px", alignItems: "flex-end" }}>
             <div style={{ fontSize: "12px", color: "#475569", lineHeight: "1.35" }}>
               <div>No. Kartu: {student.noKartu}</div>
               <div>Diterbitkan: {student.diterbitkan}</div>
