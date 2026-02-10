@@ -83,7 +83,7 @@ export function KTMCardBack({
                 padding: "6px 15px",
                 borderRadius: "999px",
                 backgroundColor: `${t.accentColor}19`,
-                color: "#0f172a",
+                color: "#000000",
                 fontSize: "16px",
                 fontWeight: 800,
                 textTransform: "uppercase",
@@ -95,8 +95,8 @@ export function KTMCardBack({
             </div>
           </div>
 
-          <div style={{ padding: "15px 22px", flex: 1, minHeight: 0, color: "#1f2937" }}>
-            <ol style={{ margin: 0, paddingLeft: "26px", fontSize: "14px", lineHeight: "1.45" }}>
+          <div style={{ padding: "15px 22px", flex: 1, minHeight: 0, color: "#000000" }}>
+            <ol style={{ margin: 0, paddingLeft: "26px", fontSize: "14px", lineHeight: "1.45", fontWeight: 600 }}>
               {terms.map((item, index) => (
                 <li key={index} style={{ marginBottom: "7px" }}>
                   {item}
@@ -106,7 +106,7 @@ export function KTMCardBack({
           </div>
 
           <div style={{ padding: "11px 19px", display: "flex", justifyContent: "space-between", gap: "15px", alignItems: "flex-end" }}>
-            <div style={{ fontSize: "12px", color: "#475569", lineHeight: "1.35" }}>
+            <div style={{ fontSize: "12px", color: "#000000", lineHeight: "1.35", fontWeight: 600 }}>
               <div>No. Kartu: {student.noKartu}</div>
               <div>Diterbitkan: {student.diterbitkan}</div>
               <div style={{ marginTop: "6px" }}>
@@ -123,12 +123,12 @@ export function KTMCardBack({
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "247px", flexShrink: 0 }}>
-              <div style={{ fontSize: "13px", color: "#64748b", marginBottom: "4px" }}>Dosen Wali,</div>
+              <div style={{ fontSize: "13px", color: "#000000", marginBottom: "4px", fontWeight: 600 }}>Dosen Wali,</div>
               <div style={{ height: "67px", display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
                 <img src={sigImg} alt="Tanda Tangan" style={{ height: "64px", width: "auto", maxWidth: "225px", objectFit: "contain" }} />
               </div>
               <div style={{ width: "225px", borderTop: "2px solid #334155", paddingTop: "4px", textAlign: "center" }}>
-                <span style={{ fontSize: "12px", color: "#1e293b", fontWeight: 700 }}>{student.dosenWali}</span>
+                <span style={{ fontSize: "12px", color: "#000000", fontWeight: 700 }}>{student.dosenWali}</span>
               </div>
             </div>
 
