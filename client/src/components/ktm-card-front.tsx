@@ -101,10 +101,10 @@ export function KTMCardFront({
           <div style={{ padding: "15px 19px 11px" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "15px" }}>
               <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: "14px", letterSpacing: "2px", color: "#334155", textTransform: "uppercase", fontWeight: 700 }}>
+                <div style={{ fontSize: "14px", letterSpacing: "2px", color: "#000000", textTransform: "uppercase", fontWeight: 700 }}>
                   Republik Indonesia
                 </div>
-                <div style={{ fontSize: "20px", fontWeight: 800, color: "#111827", textTransform: "uppercase", lineHeight: "1.2" }}>
+                <div style={{ fontSize: "20px", fontWeight: 800, color: "#000000", textTransform: "uppercase", lineHeight: "1.2" }}>
                   {university.name}
                 </div>
                 <div style={{ fontSize: "14px", color: "#000000", lineHeight: "1.2", marginTop: "2px", fontWeight: 600 }}>
