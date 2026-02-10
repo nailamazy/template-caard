@@ -80,14 +80,14 @@ export function KTMCardBack({
           <div style={{ padding: "15px 19px 11px" }}>
             <div
               style={{
-                padding: "6px 15px",
+                padding: "8px 20px",
                 borderRadius: "999px",
                 backgroundColor: `${t.accentColor}19`,
                 color: "#000000",
-                fontSize: "16px",
-                fontWeight: 800,
+                fontSize: "20px",
+                fontWeight: 900,
                 textTransform: "uppercase",
-                letterSpacing: "2px",
+                letterSpacing: "3px",
                 textAlign: "center",
               }}
             >
@@ -96,24 +96,24 @@ export function KTMCardBack({
           </div>
 
           <div style={{ padding: "15px 22px", flex: 1, minHeight: 0, color: "#000000" }}>
-            <ol style={{ margin: 0, paddingLeft: "26px", fontSize: "14px", lineHeight: "1.45", fontWeight: 600 }}>
+            <ol style={{ margin: 0, paddingLeft: "26px", fontSize: "18px", lineHeight: "1.5", fontWeight: 600 }}>
               {terms.map((item, index) => (
-                <li key={index} style={{ marginBottom: "7px" }}>
+                <li key={index} style={{ marginBottom: "10px" }}>
                   {item}
                 </li>
               ))}
             </ol>
           </div>
 
-          <div style={{ padding: "11px 19px", display: "flex", justifyContent: "space-between", gap: "15px", alignItems: "flex-end" }}>
-            <div style={{ fontSize: "12px", color: "#000000", lineHeight: "1.35", fontWeight: 600 }}>
+          <div style={{ padding: "0 25px 20px", display: "flex", justifyContent: "space-between", gap: "15px", alignItems: "flex-end" }}>
+            <div style={{ fontSize: "14px", color: "#000000", lineHeight: "1.35", fontWeight: 600 }}>
               <div>No. Kartu: {student.noKartu}</div>
               <div>Diterbitkan: {student.diterbitkan}</div>
-              <div style={{ marginTop: "6px" }}>
+              <div style={{ marginTop: "8px" }}>
                 <Barcode
                   value={student.noKartu || "KTM-0000"}
-                  width={1.5}
-                  height={30}
+                  width={1.8}
+                  height={40}
                   fontSize={0}
                   margin={0}
                   displayValue={false}
@@ -122,13 +122,13 @@ export function KTMCardBack({
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "247px", flexShrink: 0 }}>
-              <div style={{ fontSize: "13px", color: "#000000", marginBottom: "4px", fontWeight: 600 }}>Dosen Wali,</div>
-              <div style={{ height: "67px", display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
-                <img src={sigImg} alt="Tanda Tangan" style={{ height: "64px", width: "auto", maxWidth: "225px", objectFit: "contain" }} />
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "260px", flexShrink: 0 }}>
+              <div style={{ fontSize: "15px", color: "#000000", marginBottom: "4px", fontWeight: 600 }}>Dosen Wali,</div>
+              <div style={{ height: "80px", display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
+                <img src={sigImg} alt="Tanda Tangan" style={{ height: "75px", width: "auto", maxWidth: "240px", objectFit: "contain" }} />
               </div>
-              <div style={{ width: "225px", borderTop: "2px solid #334155", paddingTop: "4px", textAlign: "center" }}>
-                <span style={{ fontSize: "12px", color: "#000000", fontWeight: 700 }}>{student.dosenWali}</span>
+              <div style={{ width: "240px", borderTop: "2px solid #334155", paddingTop: "6px", textAlign: "center" }}>
+                <span style={{ fontSize: "14px", color: "#000000", fontWeight: 700 }}>{student.dosenWali}</span>
               </div>
             </div>
 
@@ -138,8 +138,8 @@ export function KTMCardBack({
                   src={university.logoUrl}
                   alt="Logo"
                   style={{
-                    width: "56px",
-                    height: "56px",
+                    width: "80px",
+                    height: "80px",
                     borderRadius: "50%",
                     objectFit: "cover",
                     opacity: 0.45,
@@ -148,15 +148,15 @@ export function KTMCardBack({
               ) : (
                 <div
                   style={{
-                    width: "56px",
-                    height: "56px",
+                    width: "80px",
+                    height: "80px",
                     borderRadius: "50%",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     backgroundColor: t.photoBg,
                     border: `2px solid ${t.photoBorder}88`,
-                    fontSize: "12px",
+                    fontSize: "16px",
                     fontWeight: 700,
                     color: t.accentColor,
                     opacity: 0.75,
