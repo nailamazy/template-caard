@@ -161,7 +161,7 @@ export function KTMCardFront({
             </div>
           </div>
 
-          <div style={{ display: "flex", gap: "18px", padding: "6px 18px 10px", flex: 1, minHeight: 0 }}>
+          <div style={{ display: "flex", gap: "18px", padding: "14px 18px 10px", flex: 1, minHeight: 0 }}>
             <div
               style={{
                 width: "170px",
