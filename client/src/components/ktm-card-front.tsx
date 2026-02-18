@@ -246,8 +246,8 @@ export function KTMCardFront({
 
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "280px", flexShrink: 0 }}>
               <div style={{ fontSize: "17px", color: "#000000", marginBottom: "3px", fontWeight: 700 }}>Dosen Wali,</div>
-              <div style={{ height: "90px", display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
-                <img src={sigImg} alt="Tanda Tangan" style={{ height: "90px", width: "auto", maxWidth: "260px", objectFit: "contain" }} />
+              <div style={{ height: "120px", display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
+                <img src={sigImg} alt="Tanda Tangan" style={{ height: "120px", width: "auto", maxWidth: "260px", objectFit: "contain" }} />
               </div>
               <div style={{ width: "260px", borderTop: "2.5px solid #000000", paddingTop: "5px", textAlign: "center" }}>
                 <span style={{ fontSize: "16px", color: "#000000", fontWeight: 800 }}>{student.dosenWali}</span>
