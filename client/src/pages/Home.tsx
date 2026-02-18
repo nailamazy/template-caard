@@ -8,7 +8,8 @@ import {
   type StudentData,
   type UniversityData,
   fakultasList,
-  jenjangList
+  jenjangList,
+  signatureImages
 } from "@/lib/ktm-data";
 import {
   builtInCardTemplates,
@@ -430,6 +431,15 @@ export default function Home() {
                         </div>
 
                         <div className="space-y-2 col-span-2">
+                          <Label>Tahun Akademik</Label>
+                          <Input
+                            value={student.tahunAkademik}
+                            onChange={(e) => handleStudentChange("tahunAkademik", e.target.value)}
+                            placeholder="2024 - 2028"
+                          />
+                        </div>
+
+                        <div className="space-y-2 col-span-2">
                           <Label>Academic Advisor</Label>
                           <Input
                             value={student.dosenWali}
@@ -608,7 +618,7 @@ export default function Home() {
                       <div className="space-y-3">
                         <Label>Signature Style</Label>
                         <div className="grid grid-cols-2 gap-3">
-                          {[0, 1, 2, 3].map((idx) => (
+                          {signatureImages.map((_, idx) => (
                             <button
                               key={idx}
                               onClick={() => setStudent(prev => ({ ...prev, signatureIndex: idx }))}
