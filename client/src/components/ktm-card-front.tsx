@@ -146,6 +146,7 @@ export function KTMCardFront({
             <div
               style={{
                 marginTop: "10px",
+                marginBottom: "6px",
                 padding: "7px 18px",
                 borderRadius: "999px",
                 backgroundColor: `${t.accentColor}19`,
@@ -196,7 +197,7 @@ export function KTMCardFront({
               )}
             </div>
 
-            <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center" }}>
+            <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "flex-start", paddingTop: "4px" }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <tbody>
                   {identityRows.map(([label, value], i) => (
